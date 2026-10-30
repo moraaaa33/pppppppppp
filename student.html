@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بيانات الطالب - أ. عمرو عبد الغني</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background-color: #f4f5f9; direction: rtl; }
+        .container { max-width: 480px; margin: 0 auto; padding: 0 20px; }
+        
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            color: #fff; padding: 30px 0 50px; text-align: center;
+            border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
+        }
+        .avatar {
+            width: 75px; height: 75px; background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%; margin: 0 auto 12px; display: flex;
+            align-items: center; justify-content: center; font-size: 32px;
+        }
+        
+        .card {
+            background: #fff; border-radius: 20px; padding: 20px;
+            margin-top: -30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .info-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 0; border-bottom: 1px solid #f0f0f0;
+        }
+        .info-item:last-child { border-bottom: none; }
+        .label { font-weight: 700; color: #4f46e5; display: flex; align-items: center; gap: 8px; }
+        .value { font-weight: 600; color: #1f2937; }
+        
+        .status-present { color: #16a34a; background: #dcfce7; padding: 4px 12px; border-radius: 20px; font-size: 13px; }
+        .status-absent { color: #dc2626; background: #fee2e2; padding: 4px 12px; border-radius: 20px; font-size: 13px; }
+        
+        .error-msg { text-align: center; color: #dc2626; padding: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="avatar"><i class="fa-solid fa-user-graduate"></i></div>
+            <h1 id="studentName">جاري التحميل...</h1>
+            <p>منصة المتابعة - أ. عمرو عبد الغني</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card" id="studentCard">
+            <div class="info-item">
+                <span class="label"><i class="fa-solid fa-id-card"></i> كود الطالب:</span>
+                <span class="value" id="studentId">-</span>
+            </div>
+            <div class="info-item">
+                <span class="label"><i class="fa-solid fa-layer-group"></i> الصف الدراسي:</span>
+                <span class="value" id="studentGrade">-</span>
+            </div>
+            <div class="info-item">
+                <span class="label"><i class="fa-solid fa-calendar-check"></i> حالة الحضور:</span>
+                <span id="studentAttendance" class="value">-</span>
+            </div>
+            <div class="info-item">
+                <span class="label"><i class="fa-solid fa-pen-to-square"></i> آخر امتحان:</span>
+                <span class="value" id="studentExam">-</span>
+            </div>
+            <div class="info-item">
+                <span class="label"><i class="fa-solid fa-comments"></i> ملاحظات المستر:</span>
+                <span class="value" id="studentNotes">-</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 1. قاعدة بيانات الطلاب (يمكنك إضافة أو تعديل الطلاب هنا)
+        const studentsData = {
+            "101": {
+                name: "أحمد محمد إبراهيم",
+                grade: "الثالث الإعدادي",
+                attendance: "حاضر",
+                exam: "19 / 20",
+                notes: "ممتاز ومجتهد جداً"
+            },
+            "102": {
+                name: "محمود علي حسن",
+                grade: "الثالث الإعدادي",
+                attendance: "غائب",
+                exam: "14 / 20",
+                notes: "يحتاج لمراجعة النحو"
+            },
+            "103": {
+                name: "يوسف إبراهيم السيد",
+                grade: "الثالث الإعدادي",
+                attendance: "حاضر",
+                exam: "20 / 20",
+                notes: "الأول على المجموعه"
+            }
+        };
+
+        // 2. قراءة كود الطالب من الرابط (?id=xxx)
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('id');
+
+        // 3. عرض البيانات بناءً على الكود
+        if (code && studentsData[code]) {
+            const data = studentsData[code];
+            document.getElementById('studentName').innerText = data.name;
+            document.getElementById('studentId').innerText = code;
+            document.getElementById('studentGrade').innerText = data.grade;
+            document.getElementById('studentExam').innerText = data.exam;
+            document.getElementById('studentNotes').innerText = data.notes;
+
+            // تنسيق حالة الحضور
+            const attendanceEl = document.getElementById('studentAttendance');
+            if (data.attendance === "حاضر") {
+                attendanceEl.innerHTML = `<span class="status-present">حاضر</span>`;
+            } else {
+                attendanceEl.innerHTML = `<span class="status-absent">غائب</span>`;
+            }
+        } else {
+            document.getElementById('studentName').innerText = "خطأ في الرابط";
+            document.getElementById('studentCard').innerHTML = `
+                <div class="error-msg">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 40px; margin-bottom: 10px; display:block;"></i>
+                    عذراً، لم يتم العثور على بيانات هذا الطالب. يرجى مسح الـ QR الخاص بك مرة أخرى.
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
